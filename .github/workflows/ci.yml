@@ -1,0 +1,62 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      live:
+        description: "Also run the live Studionet end-to-end (needs network access to Studionet)"
+        type: boolean
+        default: false
+      fast:
+        description: "Live run without the time-gated phase"
+        type: boolean
+        default: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Static checks and every automated test
+        env:
+          GENVM_VERSION: v0.2.16
+        run: python scripts/run_report.py --no-live
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: primacy-report
+          path: reports/
+
+  live:
+    if: github.event_name == 'workflow_dispatch' && inputs.live
+    needs: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Live Studionet end-to-end
+        env:
+          GENVM_VERSION: v0.2.16
+        run: python scripts/run_report.py --skip-tests ${{ inputs.fast && '--fast' || '' }}
+      - name: Upload live report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: primacy-live-report
+          path: reports/
