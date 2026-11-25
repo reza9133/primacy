@@ -1,0 +1,113 @@
+{
+  "static": {
+    "name": "static",
+    "checks": [
+      {
+        "name": "genvm-lint check contracts/primacy.py",
+        "ok": true,
+        "detail": "ding: 193.0/206.6 MB (93%)\nDownloading: 194.0/206.6 MB (93%)\nDownloading: 195.0/206.6 MB (94%)\nDownloading: 196.0/206.6 MB (94%)\nDownloading: 197.0/206.6 MB (95%)\nDownloading: 198.0/206.6 MB (95%)\nDownloading: 199.0/206.6 MB (96%)\nDownloading: 200.0/206.6 MB (96%)\nDownloading: 201.0/206.6 MB (97%)\nDownloading: 202.0/206.6 MB (97%)\nDownloading: 203.0/206.6 MB (98%)\nDownloading: 204.0/206.6 MB (98%)\nDownloading: 205.0/206.6 MB (99%)\nDownloading: 206.0/206.6 MB (99%)\nDownloading: 206.6/206.6 MB (100%)\n\u2713 Lint passed (3 checks)\n\u2713 Validation passed\n  Contract: Primacy\n  Methods: 15 (6 view, 9 write)"
+      },
+      {
+        "name": "artifacts/primacy.abi.json matches the contract",
+        "ok": true,
+        "detail": ""
+      }
+    ],
+    "ok": true
+  },
+  "tests": {
+    "name": "tests",
+    "seconds": 73.5,
+    "returncode": 0,
+    "tail": "........................................................................ [ 17%]\n........................................................................ [ 34%]\n........................................................................ [ 51%]\n........................................................................ [ 68%]\n........................................................................ [ 85%]\n..............................................................           [100%]\n422 passed in 67.12s (0:01:07)",
+    "files": {
+      "test_adjudication": {
+        "tests": 115,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 4.1
+      },
+      "test_adversarial": {
+        "tests": 22,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 1.0
+      },
+      "test_commit_reveal": {
+        "tests": 65,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 1.9
+      },
+      "test_creation": {
+        "tests": 56,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 1.8
+      },
+      "test_fuzz": {
+        "tests": 41,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 16.3
+      },
+      "test_ledger": {
+        "tests": 19,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 0.5
+      },
+      "test_lifecycle": {
+        "tests": 15,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 0.4
+      },
+      "test_live_script": {
+        "tests": 6,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 38.1
+      },
+      "test_offchain_tool": {
+        "tests": 31,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 0.3
+      },
+      "test_report_logic": {
+        "tests": 6,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 0.0
+      },
+      "test_smoke": {
+        "tests": 1,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 0.0
+      },
+      "test_validators": {
+        "tests": 45,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 2.0
+      }
+    },
+    "total": 422,
+    "failed": 0,
+    "skipped": 0,
+    "adversarial": 55,
+    "fuzz": 41,
+    "rehearsal": 6,
+    "ok": true
+  },
+  "live": {
+    "name": "live",
+    "returncode": 2,
+    "seconds": 8.6,
+    "json": "/workspaces/primacy/reports/live-e2e-20261124T154452Z.json",
+    "markdown": "/workspaces/primacy/reports/live-e2e-20261124T154452Z.md",
+    "ok": false
+  }
+}

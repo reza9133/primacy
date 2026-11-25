@@ -1,0 +1,250 @@
+{
+  "ctor": {
+    "params": [],
+    "kwparams": {}
+  },
+  "methods": {
+    "adjudicate": {
+      "params": [
+        [
+          "sponsor_text",
+          "string"
+        ],
+        [
+          "bounty_id",
+          "string"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "string",
+      "payable": false
+    },
+    "cancel_bounty": {
+      "params": [
+        [
+          "bounty_id",
+          "string"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "null",
+      "payable": false
+    },
+    "close_bounty": {
+      "params": [
+        [
+          "sponsor_text",
+          "string"
+        ],
+        [
+          "bounty_id",
+          "string"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "null",
+      "payable": false
+    },
+    "commit_finding": {
+      "params": [
+        [
+          "sponsor_text",
+          "string"
+        ],
+        [
+          "bounty_id",
+          "string"
+        ],
+        [
+          "commitment_text",
+          "string"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "int",
+      "payable": false
+    },
+    "create_bounty": {
+      "params": [
+        [
+          "bounty_id",
+          "string"
+        ],
+        [
+          "scope_text",
+          "string"
+        ],
+        [
+          "reward_wei",
+          "int"
+        ],
+        [
+          "slots",
+          "int"
+        ],
+        [
+          "bond_wei",
+          "int"
+        ],
+        [
+          "commit_by",
+          "int"
+        ],
+        [
+          "reveal_window",
+          "int"
+        ],
+        [
+          "review_by",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "string",
+      "payable": false
+    },
+    "deposit_credit": {
+      "params": [],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "int",
+      "payable": true
+    },
+    "get_accounting": {
+      "params": [],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "dict"
+    },
+    "get_bounty": {
+      "params": [
+        [
+          "sponsor_text",
+          "string"
+        ],
+        [
+          "bounty_id",
+          "string"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "dict"
+    },
+    "get_credit": {
+      "params": [
+        [
+          "owner_text",
+          "string"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "int"
+    },
+    "get_finding": {
+      "params": [
+        [
+          "sponsor_text",
+          "string"
+        ],
+        [
+          "bounty_id",
+          "string"
+        ],
+        [
+          "index",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "dict"
+    },
+    "get_findings": {
+      "params": [
+        [
+          "sponsor_text",
+          "string"
+        ],
+        [
+          "bounty_id",
+          "string"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "array"
+    },
+    "get_info": {
+      "params": [],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "dict"
+    },
+    "reveal_finding": {
+      "params": [
+        [
+          "sponsor_text",
+          "string"
+        ],
+        [
+          "bounty_id",
+          "string"
+        ],
+        [
+          "index",
+          "int"
+        ],
+        [
+          "title",
+          "string"
+        ],
+        [
+          "body",
+          "string"
+        ],
+        [
+          "salt",
+          "string"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "null",
+      "payable": false
+    },
+    "void_unrevealed": {
+      "params": [
+        [
+          "sponsor_text",
+          "string"
+        ],
+        [
+          "bounty_id",
+          "string"
+        ],
+        [
+          "index",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "null",
+      "payable": false
+    },
+    "withdraw_credit": {
+      "params": [],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "int",
+      "payable": false
+    }
+  }
+}

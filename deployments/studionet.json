@@ -1,0 +1,7 @@
+{
+  "network": "studionet",
+  "rpc": "https://studio.genlayer.com/api",
+  "contract": "0xf49Fca785788a2a3881c593F33B2E20113FD99e1",
+  "transaction": "0xdec3786346bc193a565722ce9ba28b9ccc4113edbb4b60baa3d0ddbe0aef8825",
+  "version": "0.1.0"
+}

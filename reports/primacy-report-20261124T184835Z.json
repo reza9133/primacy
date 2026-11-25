@@ -1,0 +1,27 @@
+{
+  "static": {
+    "name": "static",
+    "checks": [
+      {
+        "name": "genvm-lint check contracts/primacy.py",
+        "ok": true,
+        "detail": "\u2713 Lint passed (3 checks)\n\u2713 Validation passed\n  Contract: Primacy\n  Methods: 15 (6 view, 9 write)"
+      },
+      {
+        "name": "artifacts/primacy.abi.json matches the contract",
+        "ok": true,
+        "detail": ""
+      }
+    ],
+    "ok": true
+  },
+  "tests": null,
+  "live": {
+    "name": "live",
+    "returncode": 0,
+    "seconds": 2519.5,
+    "json": "/workspaces/primacy/reports/live-e2e-20261124T184838Z.json",
+    "markdown": "/workspaces/primacy/reports/live-e2e-20261124T184838Z.md",
+    "ok": true
+  }
+}
