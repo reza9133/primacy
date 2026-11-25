@@ -1,0 +1,17 @@
+{
+  "name": "Primacy on GenLayer Studionet",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "postCreateCommand": "bash scripts/setup.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python"],
+      "settings": {
+        "python.testing.pytestEnabled": true,
+        "python.testing.pytestArgs": ["tests/direct"]
+      }
+    }
+  },
+  "containerEnv": {
+    "GENVM_VERSION": "v0.2.16"
+  }
+}
