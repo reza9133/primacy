@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contract reference · Primacy</title>
+<meta name="description" content="All 15 methods of the Primacy contract with arguments, results and errors, plus how to call them with genlayer-js.">
+<meta name="theme-color" content="#110FFF">
+<meta property="og:title" content="Contract reference · Primacy">
+<meta property="og:description" content="All 15 methods of the Primacy contract with arguments, results and errors, plus how to call them with genlayer-js.">
+<meta property="og:type" content="website">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="reference">
+<a class="sr" href="#main">Skip to content</a>
+<div id="app-header"></div>
+<main id="main">
+
+<section class="wrap page-head"><h1>Contract reference</h1><p>Every method of the deployed Primacy contract, with arguments, results and the errors it can raise. Addresses are text, so any case works. Amounts are in wei: 1 GEN is 10<sup>18</sup> wei.</p></section>
+<div class="wrap docs">
+<nav class="toc" aria-label="Reference contents">
+  <h4>Overview</h4><a href="#calling">Calling the contract</a><a href="#shapes">Data shapes</a>
+  <h4>Write methods</h4>
+  <a href="#deposit_credit">deposit_credit</a><a href="#withdraw_credit">withdraw_credit</a><a href="#create_bounty">create_bounty</a><a href="#cancel_bounty">cancel_bounty</a><a href="#close_bounty">close_bounty</a><a href="#commit_finding">commit_finding</a><a href="#reveal_finding">reveal_finding</a><a href="#void_unrevealed">void_unrevealed</a><a href="#adjudicate">adjudicate</a>
+  <h4>View methods</h4>
+  <a href="#get_credit">get_credit</a><a href="#get_accounting">get_accounting</a><a href="#get_bounty">get_bounty</a><a href="#get_finding">get_finding</a><a href="#get_findings">get_findings</a><a href="#get_info">get_info</a>
+  <h4>More</h4><a href="docs.html">Documentation</a>
+</nav>
+<article class="prose">
+<h2 id="calling">Calling the contract</h2>
+<p>The website uses <code>genlayer-js</code>. Reads need no wallet. Writes go through any EIP-1193 provider, including the one an EIP-6963 wallet announces.</p>
+<pre><code>import { createClient } from "genlayer-js";
+import { studionet } from "genlayer-js/chains";
+
+const CONTRACT = "0xf49Fca785788a2a3881c593F33B2E20113FD99e1";
+
+// Read, no wallet needed
+const reader = createClient({ chain: studionet });
+const bounty = await reader.readContract({
+  address: CONTRACT, functionName: "get_bounty",
+  args: ["0x174fbcdecffc4ada6bd69470fcea8dce760eac3e", "MAIN"],
+});
+
+// Write through a wallet provider found with EIP-6963
+const client = createClient({ chain: studionet, account: accountAddress, provider: walletProvider });
+const hash = await client.writeContract({
+  address: CONTRACT, functionName: "deposit_credit", args: [], value: 10n ** 17n,
+});</code></pre>
+<div class="callout warn"><strong>Always read the result, not just the status.</strong><p>A transaction can reach consensus while the contract rejected the call. After the status becomes <code>ACCEPTED</code>, read the leader receipt's execution result. The website does this for every write and shows the contract's own message.</p></div>
+<p>If Studionet has fees enabled (<code>sim_getFeeConfig</code> returns <code>enabled</code>), estimate them with <code>client.estimateTransactionFees()</code> and pass them as <code>fees</code>. The website does this automatically.</p>
+<p>Numbers above 2<sup>53</sup> come back from <code>readContract</code> as strings, so convert amounts with <code>BigInt(value)</code>.</p>
+
+<h2 id="shapes">Data shapes</h2>
+<h3>Bounty record</h3>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td>key</td><td>str</td><td>Lowercase <code>sponsor:id</code>.</td></tr><tr><td>bounty_id</td><td>str</td><td>The id.</td></tr><tr><td>sponsor</td><td>str</td><td>Sponsor address, lowercase.</td></tr><tr><td>scope</td><td>str</td><td>The scope text.</td></tr><tr><td>reward_wei</td><td>int</td><td>Reward per slot.</td></tr><tr><td>bond_wei</td><td>int</td><td>Bond per finding.</td></tr><tr><td>slots</td><td>int</td><td>Total slots.</td></tr><tr><td>heads</td><td>int</td><td>Slots already paid.</td></tr><tr><td>commit_by</td><td>int</td><td>Commit deadline, unix time.</td></tr><tr><td>reveal_window</td><td>int</td><td>Seconds allowed to reveal after each commit.</td></tr><tr><td>review_by</td><td>int</td><td>Review deadline, unix time.</td></tr><tr><td>created_at / closed_at</td><td>int</td><td>Unix times. <code>closed_at</code> is 0 while open.</td></tr><tr><td>escrow</td><td>int</td><td>Reward still held for unpaid slots.</td></tr><tr><td>finding_count</td><td>int</td><td>Findings committed so far.</td></tr><tr><td>cursor</td><td>int</td><td>Index of the earliest undecided finding.</td></tr><tr><td>status</td><td>str</td><td><code>open</code>, <code>closed</code> or <code>cancelled</code>.</td></tr><tr><td>close_reason</td><td>str</td><td><code>all_slots_filled</code>, <code>review_deadline</code>, <code>commit_window_ended</code> or <code>cancelled_before_any_commit</code>.</td></tr></tbody></table></div>
+<h3>Finding record</h3>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td>index</td><td>int</td><td>Queue position.</td></tr><tr><td>hunter</td><td>str</td><td>Hunter address, lowercase.</td></tr><tr><td>commitment</td><td>str</td><td>The committed fingerprint.</td></tr><tr><td>title / body</td><td>str</td><td>Empty until revealed.</td></tr><tr><td>status</td><td>str</td><td><code>committed</code>, <code>revealed</code>, <code>distinct</code>, <code>duplicate</code>, <code>invalid</code>, <code>unresolved</code>, <code>void</code> or <code>late</code>.</td></tr><tr><td>committed_at / revealed_at / decided_at</td><td>int</td><td>Unix times, 0 when not reached.</td></tr><tr><td>reveal_by</td><td>int</td><td>Reveal deadline.</td></tr><tr><td>bond_wei / bond_state</td><td>int / str</td><td>Bond amount still held, and <code>locked</code>, <code>refunded</code> or <code>forfeited_to_sponsor</code>.</td></tr><tr><td>reward_wei</td><td>int</td><td>Reward paid, 0 unless distinct.</td></tr><tr><td>duplicate_of</td><td>int</td><td>Index of the accepted finding it duplicates, or -1.</td></tr><tr><td>in_scope / actionable</td><td>str</td><td>The validators' answers: yes, no, unclear, or empty.</td></tr><tr><td>confidence / rationale</td><td>int / str</td><td>Validator confidence 0 to 100 and a short explanation.</td></tr><tr><td>reason</td><td>str</td><td>Machine reason such as <code>not_revealed_in_time</code> or <code>inconclusive_assessment</code>.</td></tr><tr><td>attempts / failures</td><td>int</td><td>Inconclusive answers and operational failures so far.</td></tr><tr><td>retry_at</td><td>int</td><td>Earliest time the next review may run.</td></tr></tbody></table></div>
+<h2 style="margin-top:2em">Write methods</h2>
+<section class="method" id="deposit_credit"><header><code>deposit_credit</code><span class="tag w">write</span> <span class="tag p">payable</span><span class="muted small">Anyone, sends GEN</span></header><div>
+<div class="sig">deposit_credit() -&gt; int</div>
+<p style="margin-top:12px">Credits the attached GEN to the actual sender. Send the value with the call, never as a plain transfer.</p>
+<p class="muted small" style="margin:0">No arguments.</p>
+<p style="margin:12px 0 4px"><strong>Returns.</strong> The amount credited, in wei.</p>
+<p style="margin:12px 0 4px"><strong>Rejected with.</strong></p><ul><li>Deposit must be positive</li></ul>
+</div></section>
+<section class="method" id="withdraw_credit"><header><code>withdraw_credit</code><span class="tag w">write</span><span class="muted small">Anyone with credit</span></header><div>
+<div class="sig">withdraw_credit() -&gt; int</div>
+<p style="margin-top:12px">Sends the caller's whole available credit to the caller. It is the only method that emits a transfer. Locked funds are not affected.</p>
+<p class="muted small" style="margin:0">No arguments.</p>
+<p style="margin:12px 0 4px"><strong>Returns.</strong> The amount sent, in wei.</p>
+<p style="margin:12px 0 4px"><strong>Rejected with.</strong></p><ul><li>No available credit</li><li>This method does not accept value</li></ul>
+</div></section>
+<section class="method" id="create_bounty"><header><code>create_bounty</code><span class="tag w">write</span><span class="muted small">Sponsor</span></header><div>
+<div class="sig">create_bounty(bounty_id, scope_text, reward_wei, slots, bond_wei, commit_by, reveal_window, review_by) -&gt; str</div>
+<p style="margin-top:12px">Locks reward × slots from the sponsor's credit into escrow. The id is unique per sponsor, so two sponsors can use the same id.</p>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td>bounty_id</td><td>str</td><td>1 to 64 characters, <code>[A-Za-z0-9][A-Za-z0-9_.-]*</code>.</td></tr><tr><td>scope_text</td><td>str</td><td>20 to 800 characters after whitespace is collapsed.</td></tr><tr><td>reward_wei</td><td>u256</td><td>Reward per slot, 10<sup>14</sup> to 10<sup>27</sup>.</td></tr><tr><td>slots</td><td>u16</td><td>1 to 8.</td></tr><tr><td>bond_wei</td><td>u256</td><td>From 10<sup>12</sup> up to the reward.</td></tr><tr><td>commit_by</td><td>u256</td><td>Unix time. Between now + 10 minutes and now + 60 days.</td></tr><tr><td>reveal_window</td><td>u256</td><td>Seconds, 300 to 604800, counted from each commit.</td></tr><tr><td>review_by</td><td>u256</td><td>Unix time. Between commit_by + reveal_window + 1 day and + 90 days.</td></tr></tbody></table></div>
+<p style="margin:12px 0 4px"><strong>Returns.</strong> The bounty key, <code>sponsor:id</code> in lowercase.</p>
+<p style="margin:12px 0 4px"><strong>Rejected with.</strong></p><ul><li>Invalid bounty id</li><li>Invalid scope</li><li>Invalid reward</li><li>Invalid slot count</li><li>Invalid bond</li><li>Invalid reveal window</li><li>Invalid commit deadline</li><li>Invalid review deadline</li><li>Duplicate bounty id</li><li>Insufficient available credit</li></ul>
+</div></section>
+<section class="method" id="cancel_bounty"><header><code>cancel_bounty</code><span class="tag w">write</span><span class="muted small">Sponsor only</span></header><div>
+<div class="sig">cancel_bounty(bounty_id) -&gt; None</div>
+<p style="margin-top:12px">Possible only while the bounty is open and nobody has committed. Returns the whole escrow to the sponsor's credit.</p>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td>bounty_id</td><td>str</td><td>The sponsor's bounty id.</td></tr></tbody></table></div>
+<p style="margin:12px 0 4px"><strong>Returns.</strong> Nothing.</p>
+<p style="margin:12px 0 4px"><strong>Rejected with.</strong></p><ul><li>Bounty not found</li><li>Bounty cannot be cancelled</li></ul>
+</div></section>
+<section class="method" id="close_bounty"><header><code>close_bounty</code><span class="tag w">write</span><span class="muted small">Anyone</span></header><div>
+<div class="sig">close_bounty(sponsor_text, bounty_id) -&gt; None</div>
+<p style="margin-top:12px">Allowed after the review deadline, or once the commit deadline has passed and no finding is pending. Settles leftover bonds, returns unused escrow to the sponsor, and marks the bounty closed.</p>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td>sponsor_text</td><td>str</td><td>Sponsor address, any case.</td></tr><tr><td>bounty_id</td><td>str</td><td>The sponsor's bounty id.</td></tr></tbody></table></div>
+<p style="margin:12px 0 4px"><strong>Returns.</strong> Nothing.</p>
+<p style="margin:12px 0 4px"><strong>Rejected with.</strong></p><ul><li>Bounty is not open</li><li>Bounty cannot be closed yet</li></ul>
+</div></section>
+<section class="method" id="commit_finding"><header><code>commit_finding</code><span class="tag w">write</span><span class="muted small">Any hunter except the sponsor</span></header><div>
+<div class="sig">commit_finding(sponsor_text, bounty_id, commitment_text) -&gt; int</div>
+<p style="margin-top:12px">Locks the bond from the hunter's credit, appends the finding to the queue, and sets its reveal deadline to now + the reveal window.</p>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td>sponsor_text</td><td>str</td><td>Sponsor address, any case.</td></tr><tr><td>bounty_id</td><td>str</td><td>The sponsor's bounty id.</td></tr><tr><td>commitment_text</td><td>str</td><td><code>0x</code> plus 64 hex characters, the SHA-256 fingerprint.</td></tr></tbody></table></div>
+<p style="margin:12px 0 4px"><strong>Returns.</strong> The finding's index in the queue.</p>
+<p style="margin:12px 0 4px"><strong>Rejected with.</strong></p><ul><li>Commit window is closed</li><li>Sponsor cannot submit findings</li><li>All reward slots are filled</li><li>Finding limit reached</li><li>Per-hunter finding limit reached</li><li>Invalid commitment</li><li>Insufficient available credit</li></ul>
+</div></section>
+<section class="method" id="reveal_finding"><header><code>reveal_finding</code><span class="tag w">write</span><span class="muted small">The committing hunter</span></header><div>
+<div class="sig">reveal_finding(sponsor_text, bounty_id, index, title, body, salt) -&gt; None</div>
+<p style="margin-top:12px">Recomputes the fingerprint from the revealed fields. If it matches, the text is stored and the finding becomes <code>revealed</code>. Text is validated, never trimmed or rewritten.</p>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td>sponsor_text</td><td>str</td><td>Sponsor address, any case.</td></tr><tr><td>bounty_id</td><td>str</td><td>The sponsor's bounty id.</td></tr><tr><td>index</td><td>u16</td><td>Position in the queue, starting at 0.</td></tr><tr><td>title</td><td>str</td><td>1 to 120 characters, one line, exact.</td></tr><tr><td>body</td><td>str</td><td>1 to 1200 characters, exact.</td></tr><tr><td>salt</td><td>str</td><td>16 to 64 characters from <code>A-Za-z0-9_-</code>.</td></tr></tbody></table></div>
+<p style="margin:12px 0 4px"><strong>Returns.</strong> Nothing.</p>
+<p style="margin:12px 0 4px"><strong>Rejected with.</strong></p><ul><li>Only the committing hunter may reveal</li><li>Finding is not awaiting reveal</li><li>Reveal window elapsed</li><li>Invalid title</li><li>Invalid body</li><li>Invalid salt</li><li>Reveal does not match commitment</li></ul>
+</div></section>
+<section class="method" id="void_unrevealed"><header><code>void_unrevealed</code><span class="tag w">write</span><span class="muted small">Anyone</span></header><div>
+<div class="sig">void_unrevealed(sponsor_text, bounty_id, index) -&gt; None</div>
+<p style="margin-top:12px">Marks a commitment whose reveal window has passed as <code>void</code>, sends its bond to the sponsor, and lets the queue advance.</p>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td>sponsor_text</td><td>str</td><td>Sponsor address, any case.</td></tr><tr><td>bounty_id</td><td>str</td><td>The sponsor's bounty id.</td></tr><tr><td>index</td><td>u16</td><td>Position in the queue, starting at 0.</td></tr></tbody></table></div>
+<p style="margin:12px 0 4px"><strong>Returns.</strong> Nothing.</p>
+<p style="margin:12px 0 4px"><strong>Rejected with.</strong></p><ul><li>Finding cannot be voided</li></ul>
+</div></section>
+<section class="method" id="adjudicate"><header><code>adjudicate</code><span class="tag w">write</span><span class="muted small">Anyone</span></header><div>
+<div class="sig">adjudicate(sponsor_text, bounty_id) -&gt; str</div>
+<p style="margin-top:12px">Decides the earliest undecided finding. Runs the copy guard, then asks validators, then applies the decision table. This is the only method that calls a language model, so it takes longer than the others.</p>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td>sponsor_text</td><td>str</td><td>Sponsor address, any case.</td></tr><tr><td>bounty_id</td><td>str</td><td>The sponsor's bounty id.</td></tr></tbody></table></div>
+<p style="margin:12px 0 4px"><strong>Returns.</strong> The earliest finding's status after the call: <code>distinct</code>, <code>duplicate</code>, <code>invalid</code>, <code>unresolved</code>, or still <code>revealed</code> after an inconclusive answer.</p>
+<p style="margin:12px 0 4px"><strong>Rejected with.</strong></p><ul><li>Bounty is not open</li><li>Review window elapsed</li><li>No finding awaits adjudication</li><li>Earliest finding awaits reveal or voiding</li><li>Adjudication cooldown is active</li></ul>
+</div></section>
+<h2 style="margin-top:2em">View methods</h2>
+<section class="method" id="get_credit"><header><code>get_credit</code><span class="tag v">view</span><span class="muted small">Anyone</span></header><div>
+<div class="sig">get_credit(owner_text) -&gt; int</div>
+<p style="margin-top:12px"></p>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td>owner_text</td><td>str</td><td>Address of the account.</td></tr></tbody></table></div>
+<p style="margin:12px 0 4px"><strong>Returns.</strong> Available credit in wei.</p>
+<p style="margin:12px 0 4px"><strong>Rejected with.</strong></p><ul><li>Invalid credit owner</li></ul>
+</div></section>
+<section class="method" id="get_accounting"><header><code>get_accounting</code><span class="tag v">view</span><span class="muted small">Anyone</span></header><div>
+<div class="sig">get_accounting() -&gt; dict</div>
+<p style="margin-top:12px">Compares what the contract owes with what it holds. A positive <code>unallocated_balance</code> means GEN arrived by plain transfer.</p>
+<p class="muted small" style="margin:0">No arguments.</p>
+<p style="margin:12px 0 4px"><strong>Returns.</strong> <code>total_credits</code>, <code>total_locked</code>, <code>accounted_liabilities</code>, <code>contract_balance</code>, <code>unallocated_balance</code>, <code>balance_shortfall</code> and <code>solvent</code>.</p>
+
+</div></section>
+<section class="method" id="get_bounty"><header><code>get_bounty</code><span class="tag v">view</span><span class="muted small">Anyone</span></header><div>
+<div class="sig">get_bounty(sponsor_text, bounty_id) -&gt; dict</div>
+<p style="margin-top:12px"></p>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td>sponsor_text</td><td>str</td><td>Sponsor address, any case.</td></tr><tr><td>bounty_id</td><td>str</td><td>The sponsor's bounty id.</td></tr></tbody></table></div>
+<p style="margin:12px 0 4px"><strong>Returns.</strong> A bounty record, see the table below.</p>
+<p style="margin:12px 0 4px"><strong>Rejected with.</strong></p><ul><li>Bounty not found</li></ul>
+</div></section>
+<section class="method" id="get_finding"><header><code>get_finding</code><span class="tag v">view</span><span class="muted small">Anyone</span></header><div>
+<div class="sig">get_finding(sponsor_text, bounty_id, index) -&gt; dict</div>
+<p style="margin-top:12px"></p>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td>sponsor_text</td><td>str</td><td>Sponsor address, any case.</td></tr><tr><td>bounty_id</td><td>str</td><td>The sponsor's bounty id.</td></tr><tr><td>index</td><td>u16</td><td>Position in the queue, starting at 0.</td></tr></tbody></table></div>
+<p style="margin:12px 0 4px"><strong>Returns.</strong> A finding record, see the table below.</p>
+<p style="margin:12px 0 4px"><strong>Rejected with.</strong></p><ul><li>Bounty not found</li><li>Finding not found</li></ul>
+</div></section>
+<section class="method" id="get_findings"><header><code>get_findings</code><span class="tag v">view</span><span class="muted small">Anyone</span></header><div>
+<div class="sig">get_findings(sponsor_text, bounty_id) -&gt; list</div>
+<p style="margin-top:12px"></p>
+<div class="table-wrap"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td>sponsor_text</td><td>str</td><td>Sponsor address, any case.</td></tr><tr><td>bounty_id</td><td>str</td><td>The sponsor's bounty id.</td></tr></tbody></table></div>
+<p style="margin:12px 0 4px"><strong>Returns.</strong> Every finding of the bounty in queue order.</p>
+<p style="margin:12px 0 4px"><strong>Rejected with.</strong></p><ul><li>Bounty not found</li></ul>
+</div></section>
+<section class="method" id="get_info"><header><code>get_info</code><span class="tag v">view</span><span class="muted small">Anyone</span></header><div>
+<div class="sig">get_info() -&gt; dict</div>
+<p style="margin-top:12px">Useful for checking that a deployment is what you expect.</p>
+<p class="muted small" style="margin:0">No arguments.</p>
+<p style="margin:12px 0 4px"><strong>Returns.</strong> Name, version, commitment domain, every limit in this reference, and short descriptions of the priority rule, settlement model and bond policy.</p>
+
+</div></section>
+</article></div>
+
+</main>
+<div id="app-footer"></div>
+<noscript><div style="padding:20px;background:#FFC933;border-top:2px solid #15143B;text-align:center;font-weight:700">Primacy needs JavaScript to talk to your wallet and to Studionet.</div></noscript>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/chain.js"></script>
+<script src="assets/js/pages.js"></script>
+<script src="assets/js/pages2.js"></script>
+<script>Primacy.boot(function (page) { var f = Primacy.pages && Primacy.pages[page]; if (f) f(); });</script>
+</body>
+</html>

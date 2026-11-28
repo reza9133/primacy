@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Documentation · Primacy</title>
+<meta name="description" content="How Primacy works: commit and reveal, how validators judge findings, where the money goes, limits, wallets and troubleshooting.">
+<meta name="theme-color" content="#110FFF">
+<meta property="og:title" content="Documentation · Primacy">
+<meta property="og:description" content="How Primacy works: commit and reveal, how validators judge findings, where the money goes, limits, wallets and troubleshooting.">
+<meta property="og:type" content="website">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="docs">
+<a class="sr" href="#main">Skip to content</a>
+<div id="app-header"></div>
+<main id="main">
+
+<section class="wrap page-head"><h1>Documentation</h1><p>Everything about Primacy in one place: how a bounty works, how decisions are made, and how to use this website with your wallet.</p></section>
+<div class="wrap docs">
+
+<nav class="toc" aria-label="Documentation contents">
+  <h4>Start here</h4>
+  <a href="#overview">What Primacy is</a><a href="#quickstart">Quick start</a><a href="#network">Wallet and network</a>
+  <h4>How it works</h4>
+  <a href="#concepts">Core concepts</a><a href="#lifecycle">Lifecycle and statuses</a><a href="#commit-reveal">Commit and reveal</a><a href="#decisions">How findings are judged</a><a href="#money">Where the money goes</a><a href="#limits">Limits and rules</a>
+  <h4>Using this site</h4>
+  <a href="#site-guide">The pages</a><a href="#wallets">Wallets (EIP-6963)</a><a href="#troubleshooting">Troubleshooting</a>
+  <h4>Project</h4>
+  <a href="#contract">The deployed contract</a><a href="#security">Security and honest limits</a><a href="#selfhost">Run or host the site</a><a href="#faq">FAQ</a><a href="#glossary">Glossary</a>
+  <h4>More</h4>
+  <a href="reference.html">Contract reference</a>
+</nav>
+<article class="prose">
+
+<h2 id="overview">What Primacy is</h2>
+<p>Primacy is a first-finder bounty board that runs as a GenLayer Intelligent Contract. A <strong>sponsor</strong> funds a bounty and writes what counts as a valid finding. <strong>Hunters</strong> submit findings. The first finding of each distinct defect earns the reward, and later reports of the same defect earn nothing, however they are worded.</p>
+<p>Three things make that fair, and each one is enforced by the contract instead of by trust:</p>
+<ul>
+<li><strong>Order is fixed by the chain.</strong> A hunter commits a hash of the finding first. Commit order is the priority order, and the text stays hidden until it is revealed, so nobody can read it and race in.</li>
+<li><strong>Duplicates are judged by meaning.</strong> Validators powered by language models compare a new finding with the accepted ones and decide whether it reports the same underlying defect.</li>
+<li><strong>Money follows fixed rules.</strong> The model fills in a small structured form. Contract code turns that form into an outcome and moves the funds. The model never picks an amount or a recipient.</li>
+</ul>
+<div class="callout ok"><strong>Who does what.</strong><p>Sponsors create bounties. Hunters commit and reveal findings. Anyone can trigger a review, void a finding that was never revealed, or close a finished bounty, so the process never waits on the sponsor.</p></div>
+
+<h2 id="quickstart">Quick start</h2>
+<h3>As a sponsor</h3>
+<ol>
+<li>Press <strong>Connect wallet</strong> and approve the switch to GenLayer Studionet when your wallet asks.</li>
+<li>Open <a href="wallet.html">My credit</a>. If you have no test GEN, use <em>Get 1 test GEN</em>, then deposit what you want to lock.</li>
+<li>Open <a href="create.html">Create</a>. Write the scope, set the reward, slots, bond and deadlines, then create the bounty. The reward for every slot is locked immediately.</li>
+<li>Share the bounty link with hunters.</li>
+<li>After the reveals, press <em>Review finding</em> on the bounty page, or let anyone else do it. Validators decide each finding in order.</li>
+<li>When the work is done, close the bounty. Unused reward returns to your credit and you can withdraw it.</li>
+</ol>
+<h3>As a hunter</h3>
+<ol>
+<li>Connect your wallet and keep at least the bond in your Primacy credit.</li>
+<li>Open the bounty and read the scope carefully. It is what validators will judge against.</li>
+<li>Go to <a href="hunt.html">Hunt</a>, write the title and details, and press <em>Commit finding</em>. The site generates the salt and saves everything in your vault.</li>
+<li>Export a vault backup from the Hunt page.</li>
+<li>Before the reveal deadline, press <em>Reveal now</em> in the vault. Missing it forfeits the bond.</li>
+<li>Wait for the review. If you were first and in scope you receive the reward plus your bond back. Then withdraw from <a href="wallet.html">My credit</a>.</li>
+</ol>
+
+<h2 id="network">Wallet and network</h2>
+<p>Primacy runs on GenLayer Studionet. This site prompts your wallet to add and switch to it automatically. To add it by hand, use these values:</p>
+<div class="table-wrap tbl"><table><tbody>
+<tr><th>Network name</th><td>GenLayer Studionet</td></tr>
+<tr><th>Chain ID</th><td><code>61999</code> (hex <code>0xf22f</code>)</td></tr>
+<tr><th>RPC URL</th><td><code>https://studio.genlayer.com/api</code></td></tr>
+<tr><th>Currency symbol</th><td>GEN (18 decimals)</td></tr>
+<tr><th>Block explorer</th><td><code>https://explorer-studio.genlayer.com</code></td></tr>
+</tbody></table></div>
+<div class="callout"><strong>Test network.</strong><p>Studionet uses test funds with no real value. Treat it as a place to try things. Do not put an undisclosed security vulnerability into a public bounty, because revealed findings are permanently public.</p></div>
+
+<h2 id="concepts">Core concepts</h2>
+<dl class="kv" style="grid-template-columns:minmax(140px,200px) 1fr">
+<dt>Credit</dt><dd>Your balance inside Primacy. You deposit GEN to get credit and withdraw it back. Rewards, bonds and refunds all move through credit, and only you can withdraw yours.</dd>
+<dt>Bounty</dt><dd>Identified by its sponsor address and an id the sponsor chooses, such as <code>docs-v1</code>. Holds a scope, a reward per slot, a number of slots, a bond, and three deadlines.</dd>
+<dt>Slot</dt><dd>One payable defect. A bounty with 3 slots pays at most 3 distinct findings. When every slot is paid, the bounty closes by itself.</dd>
+<dt>Finding</dt><dd>A report committed by a hunter. It has a title and body once revealed, and moves through the statuses below.</dd>
+<dt>Queue</dt><dd>Findings in commit order. They are decided strictly one at a time from the front, which is how priority is guaranteed.</dd>
+<dt>Bond</dt><dd>A deposit locked with every commit. It is returned for honest findings and goes to the sponsor for invalid or abandoned ones.</dd>
+<dt>Accepted finding</dt><dd>A finding judged <em>distinct</em>. New findings are compared with these when checking for duplicates.</dd>
+</dl>
+
+<h2 id="lifecycle">Lifecycle and statuses</h2>
+<div class="flow" style="grid-template-columns:repeat(3,1fr);margin:34px 0 10px">
+<div><h4>Open</h4><p class="muted small">Commits accepted until the commit deadline or until all slots are paid.</p></div>
+<div><h4>Reviewing</h4><p class="muted small">Revealed findings are decided in order until the review deadline.</p></div>
+<div><h4>Closed</h4><p class="muted small">Unused reward returns to the sponsor. Pending bonds are settled.</p></div>
+</div>
+<p>A bounty is <code>open</code>, then <code>closed</code>. A sponsor can instead <code>cancel</code> it, but only while nobody has committed. A bounty closes when all slots are paid, when the review deadline passes, or when the commit window has ended and nothing is pending.</p>
+<h3>Finding statuses</h3>
+<div class="table-wrap tbl"><table>
+<thead><tr><th>Status</th><th>Meaning</th><th>Bond</th><th>Reward</th></tr></thead><tbody>
+<tr><td><span class="chip committed">committed</span></td><td>Hash is on chain, text is hidden.</td><td>Locked</td><td>No</td></tr>
+<tr><td><span class="chip revealed">revealed</span></td><td>Text is public, waiting its turn.</td><td>Locked</td><td>No</td></tr>
+<tr><td><span class="chip distinct">distinct</span></td><td>In scope, actionable, and the first report of its defect.</td><td>Refunded</td><td>Paid</td></tr>
+<tr><td><span class="chip duplicate">duplicate</span></td><td>Same defect as an accepted finding.</td><td>Refunded</td><td>No</td></tr>
+<tr><td><span class="chip invalid">invalid</span></td><td>Out of scope or not actionable, with enough confidence.</td><td>To the sponsor</td><td>No</td></tr>
+<tr><td><span class="chip unresolved">unresolved</span></td><td>Validators could not decide within the retry budget, or the bounty closed first.</td><td>Refunded</td><td>No</td></tr>
+<tr><td><span class="chip void">void</span></td><td>Not revealed in time.</td><td>To the sponsor</td><td>No</td></tr>
+<tr><td><span class="chip late">late</span></td><td>The bounty filled its slots while this finding was still waiting.</td><td>Refunded</td><td>No</td></tr>
+</tbody></table></div>
+
+<h2 id="commit-reveal">Commit and reveal</h2>
+<p>Committing publishes only a SHA-256 fingerprint. Revealing publishes the text, and the contract recomputes the fingerprint. If it does not match what you committed, the reveal is rejected. Because the fingerprint includes your address, nobody else can reveal your commitment, and because it includes the bounty, it cannot be reused elsewhere.</p>
+<h3>What is hashed</h3>
+<p>Six fields, each written as <code>&lt;byte length&gt;:&lt;UTF-8 bytes&gt;;</code> and concatenated, then hashed with SHA-256:</p>
+<ol>
+<li>The domain string <code>primacy/v1</code></li>
+<li>The bounty key: the sponsor address in lowercase, a colon, and the bounty id</li>
+<li>Your address in lowercase</li>
+<li>Your salt</li>
+<li>The title</li>
+<li>The body</li>
+</ol>
+<pre><code>// JavaScript (this is what the website runs)
+const enc = new TextEncoder();
+const field = (s) =&gt; { const b = enc.encode(s); return [enc.encode(b.length + ":"), b, enc.encode(";")]; };
+async function commitment(sponsor, bountyId, hunter, salt, title, body) {
+  const parts = ["primacy/v1", sponsor.toLowerCase() + ":" + bountyId, hunter.toLowerCase(), salt, title, body];
+  const chunks = parts.flatMap(field);
+  const buf = new Uint8Array(chunks.reduce((n, c) =&gt; n + c.length, 0));
+  let at = 0; for (const c of chunks) { buf.set(c, at); at += c.length; }
+  const h = new Uint8Array(await crypto.subtle.digest("SHA-256", buf));
+  return "0x" + Array.from(h, (x) =&gt; x.toString(16).padStart(2, "0")).join("");
+}</code></pre>
+<pre><code># Python (scripts/primacy_commit.py in the repository)
+def field(text): raw = text.encode("utf-8"); return str(len(raw)).encode() + b":" + raw + b";"
+payload = b"".join(field(p) for p in ("primacy/v1", sponsor.lower() + ":" + bounty_id, hunter.lower(), salt, title, body))
+digest = "0x" + hashlib.sha256(payload).hexdigest()</code></pre>
+<div class="callout ok"><strong>Verified.</strong><p>The website's JavaScript was checked against the Python helper on mixed-case addresses and non-ASCII text, and produces identical digests.</p></div>
+<h3>Rules for the text</h3>
+<ul>
+<li>Title: 1 to 120 characters, one line. Body: 1 to 1200 characters, line breaks allowed.</li>
+<li>No leading or trailing whitespace. Revealed text is validated, never silently trimmed, because it is bound to the hash.</li>
+<li>No control characters or invisible characters such as zero-width spaces or bidirectional overrides.</li>
+<li>Salt: 16 to 64 characters from <code>A-Z a-z 0-9 _ -</code>. The site generates 32 random hex characters.</li>
+</ul>
+<div class="callout danger"><strong>Keep the salt.</strong><p>Without the exact title, body and salt you cannot reveal, and an unrevealed commitment forfeits its bond. The Hunt page stores them in your browser and can export a backup file.</p></div>
+
+<h2 id="decisions">How findings are judged</h2>
+<p>When someone presses <em>Review</em>, the contract takes the earliest finding that has been revealed and decides it against the accepted findings so far. Review is strictly in queue order. If the earliest finding has not been revealed yet, the line waits until it is revealed or voided.</p>
+<h3>Step 1: the copy guard</h3>
+<p>Before any model is asked, a deterministic check compares the candidate with each accepted finding using three-word shingles. If both texts have at least 12 words and the Jaccard similarity is 90 percent or higher, the finding is marked a duplicate immediately. Pasting someone else's report with a few words changed does not get through.</p>
+<h3>Step 2: validators fill in a form</h3>
+<p>Otherwise the leader validator sends a prompt containing the scope, the accepted findings (labelled H1, H2 and so on) and the candidate. The reply must be one JSON object:</p>
+<pre><code>{
+  "in_scope": "yes | no | unclear",
+  "actionable": "yes | no | unclear",
+  "duplicate_of": "none | unclear | H1 | H2 ...",
+  "confidence": 0-100,
+  "rationale": "up to 300 characters"
+}</code></pre>
+<p>All of the quoted text is wrapped in a fence made from a hash of that text itself, so a report cannot contain the closing marker, and the prompt tells the model that nothing inside the fence is an instruction.</p>
+<h3>Step 3: the decision table</h3>
+<p>Contract code, not the model, turns the form into an outcome:</p>
+<div class="table-wrap tbl"><table>
+<thead><tr><th>If the form says</th><th>The outcome is</th></tr></thead><tbody>
+<tr><td>confidence below 80</td><td><code>inconclusive</code></td></tr>
+<tr><td>in_scope is no, or actionable is no</td><td><code>invalid</code></td></tr>
+<tr><td>in_scope or actionable is unclear</td><td><code>inconclusive</code></td></tr>
+<tr><td>duplicate_of is unclear</td><td><code>inconclusive</code></td></tr>
+<tr><td>duplicate_of is none</td><td><code>distinct</code></td></tr>
+<tr><td>duplicate_of names H1, H2 and so on</td><td><code>duplicate</code> of that accepted finding</td></tr>
+</tbody></table></div>
+<h3>Step 4: consensus on what matters</h3>
+<p>Other validators run the same prompt independently. Language models never produce identical text, so the contract compares only what decides money:</p>
+<ul>
+<li>The outcome must be the same.</li>
+<li>For a duplicate, both must name the same accepted finding, because that decides who was first.</li>
+<li>For an invalid finding, both must name at least one common defect (out of scope or not actionable), because a bond is forfeited.</li>
+<li>Rationales and confidence values may differ.</li>
+</ul>
+<p>If validators cannot agree, the call produces no decision and nothing is paid.</p>
+<h3>Inconclusive answers and retries</h3>
+<p>An inconclusive answer or an operational failure records an attempt and starts a cooldown of 5 minutes that doubles each time, up to 2 hours. After 3 inconclusive answers or 6 failures the finding becomes <code>unresolved</code>, its bond is refunded, and the queue moves on. The bounty page shows the cooldown timer.</p>
+<div class="callout warn"><strong>The sponsor writes the scope.</strong><p>Validators judge against the sponsor's text, and there is no appeal. Hunters should read the scope first. Sponsors should say clearly what is in and what is out.</p></div>
+
+<h2 id="money">Where the money goes</h2>
+<div class="table-wrap tbl"><table>
+<thead><tr><th>Event</th><th>What moves</th></tr></thead><tbody>
+<tr><td>Deposit</td><td>GEN you send becomes your credit.</td></tr>
+<tr><td>Create bounty</td><td>Reward × slots moves from the sponsor's credit into escrow.</td></tr>
+<tr><td>Commit</td><td>The bond moves from the hunter's credit into a lock.</td></tr>
+<tr><td>Finding is distinct</td><td>The hunter receives one reward and the bond back.</td></tr>
+<tr><td>Finding is duplicate or unresolved or late</td><td>The bond returns to the hunter.</td></tr>
+<tr><td>Finding is invalid or void</td><td>The bond goes to the sponsor's credit.</td></tr>
+<tr><td>Close</td><td>Unspent escrow returns to the sponsor's credit.</td></tr>
+<tr><td>Withdraw</td><td>Your whole available credit is sent to your own wallet.</td></tr>
+</tbody></table></div>
+<p>The contract keeps a running total of credit and locked funds, and <code>get_accounting</code> compares it with the real balance. The home page shows whether the books balance.</p>
+<div class="callout warn"><strong>Always deposit through the site.</strong><p>GEN sent to the contract address by a plain transfer is not credited to anyone and cannot be recovered.</p></div>
+
+<h2 id="limits">Limits and rules</h2>
+<div class="table-wrap tbl"><table>
+<thead><tr><th>Item</th><th>Rule</th></tr></thead><tbody>
+<tr><td>Reward per slot</td><td>0.0001 GEN up to 1,000,000,000 GEN</td></tr>
+<tr><td>Bond</td><td>At least 0.000001 GEN and never above the reward</td></tr>
+<tr><td>Slots</td><td>1 to 8</td></tr>
+<tr><td>Findings per bounty</td><td>32 in total, and 4 per hunter</td></tr>
+<tr><td>Bounty id</td><td>1 to 64 characters: letters, digits, dot, dash, underscore, starting with a letter or digit</td></tr>
+<tr><td>Scope</td><td>20 to 800 characters after whitespace is collapsed</td></tr>
+<tr><td>Title and body</td><td>Up to 120 and up to 1200 characters</td></tr>
+<tr><td>Commit deadline</td><td>10 minutes to 60 days from creation</td></tr>
+<tr><td>Reveal window</td><td>5 minutes to 7 days, counted from each commit</td></tr>
+<tr><td>Review deadline</td><td>1 to 90 days after the commit deadline plus the reveal window</td></tr>
+<tr><td>Confidence threshold</td><td>80</td></tr>
+<tr><td>Retry budget</td><td>3 inconclusive answers or 6 failures, cooldown 5 minutes doubling to 2 hours</td></tr>
+</tbody></table></div>
+<p>The sponsor cannot commit to their own bounty. This website offers shorter choices than the contract allows so the defaults are safe: the shortest commit window it offers is 15 minutes, because the contract needs at least 10 and your transaction takes a little while to land.</p>
+
+<h2 id="site-guide">The pages</h2>
+<div class="table-wrap tbl"><table>
+<thead><tr><th>Page</th><th>Use it to</th></tr></thead><tbody>
+<tr><td><a href="index.html">Home</a></td><td>See the idea and the contract's live totals.</td></tr>
+<tr><td><a href="explore.html">Bounties</a></td><td>Open a bounty by sponsor and id, or from your list and the live examples.</td></tr>
+<tr><td>Bounty page</td><td>Read the scope, timeline and queue. Reveal, review, void, close or cancel, depending on who you are and what the time allows.</td></tr>
+<tr><td><a href="create.html">Create</a></td><td>Open a bounty. Shows the total to lock and whether your credit covers it.</td></tr>
+<tr><td><a href="hunt.html">Hunt</a></td><td>Commit a finding and manage your vault: reveal, sync, export and import.</td></tr>
+<tr><td><a href="wallet.html">My credit</a></td><td>Deposit, withdraw, get test GEN, and see the contract's books.</td></tr>
+<tr><td><a href="demo.html">Demo</a></td><td>A guided simulation of a whole bounty.</td></tr>
+</tbody></table></div>
+<h3>Where your data lives</h3>
+<p>The site has no server of its own. It talks to your wallet and to the Studionet RPC. The vault (your saved findings and salts) and your bounty list live in this browser's local storage and never leave it, except as the hash you commit and the text you choose to reveal. Because they are per browser, use <em>Export</em> to back up and <em>Import</em> to move them.</p>
+<p>Text from findings and scopes is untrusted. The site always displays it as plain text and never as HTML.</p>
+
+<h2 id="wallets">Wallets (EIP-6963)</h2>
+<p>Browsers can have several wallet extensions at once, and the old <code>window.ethereum</code> object lets them fight over one slot. Primacy uses <strong>EIP-6963</strong> instead: each wallet announces itself with its name, icon and identifier, and the site lists every wallet it hears from. If a browser only has an older wallet, Primacy falls back to <code>window.ethereum</code> and labels it.</p>
+<ul>
+<li><strong>Connect.</strong> The picker asks the chosen wallet for access to an account. Your choice is remembered, so reloading the page reconnects quietly without a popup, as long as the wallet still allows it.</li>
+<li><strong>Switch network.</strong> If the wallet is not on Studionet, a yellow banner and a dialog explain it, and the wallet is asked to switch. If Studionet is unknown to the wallet, it is offered to add it first.</li>
+<li><strong>Disconnect.</strong> The menu under your address ends the session: the site forgets the wallet, stops listening to it, and asks the wallet to revoke access where it supports that. You will not be reconnected automatically afterwards.</li>
+<li><strong>Changes in the wallet.</strong> Switching account or network inside the wallet is picked up immediately.</li>
+</ul>
+<p>Primacy never sees a private key. Every transaction is confirmed inside your wallet, and the site shows each one as it moves from your wallet, through validator consensus, to the contract's result.</p>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3>Wallet and network</h3>
+<ul>
+<li><strong>"No wallet was found."</strong> Install an EIP-6963 wallet such as MetaMask or Rabby and reload the page.</li>
+<li><strong>Yellow "Wrong network" banner.</strong> Press <em>Switch network</em> and approve it in your wallet.</li>
+<li><strong>"You rejected the request in your wallet."</strong> You closed the wallet popup. Press the button again.</li>
+<li><strong>Consensus ended as UNDETERMINED or a timeout.</strong> Validators did not agree in time. Nothing changed. Wait a moment and try again.</li>
+</ul>
+<h3>Messages from the contract</h3>
+<div class="table-wrap tbl"><table>
+<thead><tr><th>Message</th><th>What it means</th></tr></thead><tbody>
+<tr><td>Insufficient available credit</td><td>Deposit more on <a href="wallet.html">My credit</a> first.</td></tr>
+<tr><td>Duplicate bounty id</td><td>You already used that id. Choose another.</td></tr>
+<tr><td>Invalid commit deadline / reveal window / review deadline</td><td>A time is outside the allowed range. Use the choices on the Create page.</td></tr>
+<tr><td>Bounty not found</td><td>The sponsor address or id is wrong. Both must match exactly.</td></tr>
+<tr><td>Commit window is closed</td><td>The commit deadline passed or the bounty is no longer open.</td></tr>
+<tr><td>Sponsor cannot submit findings</td><td>Use a different address to hunt.</td></tr>
+<tr><td>All reward slots are filled</td><td>Every slot has been paid.</td></tr>
+<tr><td>Finding limit reached / Per-hunter finding limit reached</td><td>The queue has 32 findings, or you already have 4 here.</td></tr>
+<tr><td>Only the committing hunter may reveal</td><td>Switch your wallet to the address that committed.</td></tr>
+<tr><td>Reveal window elapsed</td><td>Too late. Anyone can void the commitment and the bond goes to the sponsor.</td></tr>
+<tr><td>Reveal does not match commitment</td><td>The title, body or salt differs from what you committed, even by one character.</td></tr>
+<tr><td>Earliest finding awaits reveal or voiding</td><td>The finding at the front of the queue is not revealed yet.</td></tr>
+<tr><td>Adjudication cooldown is active</td><td>The last attempt was inconclusive. Wait for the timer on the bounty page.</td></tr>
+<tr><td>Review window elapsed</td><td>The review deadline passed. Close the bounty.</td></tr>
+<tr><td>Bounty cannot be closed yet</td><td>Commits are still open or findings are still pending.</td></tr>
+<tr><td>Bounty cannot be cancelled</td><td>Cancelling is only possible before the first commit.</td></tr>
+<tr><td>No available credit</td><td>Nothing to withdraw.</td></tr>
+</tbody></table></div>
+
+<h2 id="contract">The deployed contract</h2>
+<div class="table-wrap tbl"><table><tbody>
+<tr><th>Network</th><td>GenLayer Studionet, chain id 61999</td></tr>
+<tr><th>Address</th><td><a class="addr" href="https://explorer-studio.genlayer.com/address/0xf49Fca785788a2a3881c593F33B2E20113FD99e1" target="_blank" rel="noopener">0xf49Fca785788a2a3881c593F33B2E20113FD99e1</a></td></tr>
+<tr><th>Deployment transaction</th><td><a class="addr break" href="https://explorer-studio.genlayer.com/tx/0xdec3786346bc193a565722ce9ba28b9ccc4113edbb4b60baa3d0ddbe0aef8825" target="_blank" rel="noopener">0xdec37863…ef8825</a></td></tr>
+<tr><th>Name and version</th><td>Primacy 0.1.0, commitment domain <code>primacy/v1</code></td></tr>
+<tr><th>Source</th><td><a href="https://github.com/reza9133/primacy/" target="_blank" rel="noopener">github.com/reza9133/primacy</a></td></tr>
+</tbody></table></div>
+<p>The full list of methods, arguments and errors is on the <a href="reference.html">contract reference</a> page.</p>
+
+<h2 id="security">Security and honest limits</h2>
+<p>These are real, and the contract's design notes list them too. None of them lets anyone take funds that are not theirs. They concern fairness, liveness and cost.</p>
+<ol>
+<li><strong>Queue stuffing.</strong> One actor with many addresses can fill the 32-finding queue. The deterrent is the bond, so sponsors should set it to 5 to 10 percent of the reward or more.</li>
+<li><strong>Back-off stalls.</strong> Decisions are strictly ordered, so a finding that keeps failing holds the line until its retry budget is spent, roughly two and a half hours at most.</li>
+<li><strong>The sponsor controls the scope,</strong> and there is no appeal.</li>
+<li><strong>Compared with accepted findings only.</strong> A new finding is compared with accepted ones, not with earlier duplicates or rejected findings. An unusually terse first report can make a better-written later one look distinct.</li>
+<li><strong>No truth check.</strong> Validators read text. They can say a report is specific and in scope, but not whether the claimed error really exists. The sponsor verifies facts.</li>
+<li><strong>Plain transfers are stranded</strong> when sent without <code>deposit_credit</code>.</li>
+<li><strong>Findings are public forever</strong> once revealed.</li>
+</ol>
+
+<h2 id="selfhost">Run or host the site</h2>
+<p>The site is plain static files. There is no build step to run it, only to regenerate the bundled GenLayer SDK.</p>
+<pre><code>cd frontend
+python3 -m http.server 8080
+# open http://localhost:8080</code></pre>
+<p>Serve it over <code>http://localhost</code> or <code>https</code>. Wallet extensions do not inject into <code>file://</code> pages.</p>
+<h3>Change the contract address</h3>
+<p>Edit one place, <code>assets/js/config.js</code>. The address, chain, links and example bounties are all there.</p>
+<h3>GitHub Pages</h3>
+<p>The repository includes a workflow, <code>.github/workflows/pages.yml</code>, that publishes the <code>frontend</code> folder. In the repository settings, set <em>Pages</em> to use <em>GitHub Actions</em>, then push to the main branch.</p>
+<h3>Rebuild the SDK bundle</h3>
+<pre><code>cd frontend/tools
+npm install
+npm run build   # writes ../assets/js/genlayer-sdk.js</code></pre>
+<p>The bundle wraps <code>genlayer-js</code>, which is what sends transactions through your wallet and reads the contract.</p>
+
+<h2 id="faq">FAQ</h2>
+<details><summary>Why commit first and reveal later?</summary><div>If the text were public at commit time, anyone could copy it and commit first. Committing a hash fixes your place in line without exposing the finding, and the reveal proves the text is what you committed.</div></details>
+<details><summary>Can a sponsor refuse to pay a good finding?</summary><div>No. Payment is decided by validators and contract code. The sponsor can only choose the scope before the bounty opens.</div></details>
+<details><summary>Can a hunter get paid twice for the same defect?</summary><div>No. Later reports of an accepted defect are marked duplicate and earn no reward, even if the wording is different.</div></details>
+<details><summary>What if two hunters find the same defect at the same time?</summary><div>The earlier commit is decided first. The later one is then compared with it and, if it reports the same defect, is a duplicate. That is why commit order is the priority.</div></details>
+<details><summary>I lost my salt. What now?</summary><div>You cannot reveal that finding, so its bond is forfeited once the reveal window ends. Restore from an exported vault backup if you have one.</div></details>
+<details><summary>Why does review take a minute or more?</summary><div>Validators each run a language model and then compare results. That takes longer than a normal transaction. The transaction dialog shows the stage it is in.</div></details>
+<details><summary>Who can press Review?</summary><div>Anyone. The result does not depend on who calls it, so hunters, sponsors and bystanders can all move the line along.</div></details>
+<details><summary>Is this safe to use with real money?</summary><div>This site targets Studionet, a test network. The contract's limits are documented above, and it should be audited before any use with funds of value.</div></details>
+<details><summary>Why does my wallet show a different recipient address?</summary><div>On GenLayer every call is sent to the network's consensus contract, which then routes it to Primacy. That is normal. The explorer shows the call and its target, and the amount shown for a deposit is the GEN you are crediting.</div></details>
+<details><summary>Is the commitment really private?</summary><div>The hash reveals nothing readable. The salt adds randomness so short or guessable text cannot be brute-forced from the hash.</div></details>
+
+<h2 id="glossary">Glossary</h2>
+<dl class="kv" style="grid-template-columns:minmax(140px,200px) 1fr">
+<dt>Commitment</dt><dd>The SHA-256 fingerprint of a finding, posted before the text.</dd>
+<dt>Salt</dt><dd>A random secret mixed into the fingerprint.</dd>
+<dt>Reveal</dt><dd>Publishing the text so the contract can check it against the commitment.</dd>
+<dt>Adjudicate</dt><dd>Decide the next finding in the queue with validators.</dd>
+<dt>Validator</dt><dd>A GenLayer node that runs the contract's logic, including the language-model step, and votes on the result.</dd>
+<dt>Intelligent Contract</dt><dd>A GenLayer contract that can call a language model and still reach consensus on the outcome.</dd>
+<dt>Studionet</dt><dd>GenLayer's hosted test network for building and trying contracts.</dd>
+<dt>EIP-6963</dt><dd>The standard that lets several browser wallets announce themselves without clashing.</dd>
+</dl>
+
+</article>
+</div>
+
+</main>
+<div id="app-footer"></div>
+<noscript><div style="padding:20px;background:#FFC933;border-top:2px solid #15143B;text-align:center;font-weight:700">Primacy needs JavaScript to talk to your wallet and to Studionet.</div></noscript>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/chain.js"></script>
+<script src="assets/js/pages.js"></script>
+<script src="assets/js/pages2.js"></script>
+<script>Primacy.boot(function (page) { var f = Primacy.pages && Primacy.pages[page]; if (f) f(); });</script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Submit a finding · Primacy</title>
+<meta name="description" content="Commit a hidden finding, keep your salt safe, and reveal it before the window ends.">
+<meta name="theme-color" content="#110FFF">
+<meta property="og:title" content="Submit a finding · Primacy">
+<meta property="og:description" content="Commit a hidden finding, keep your salt safe, and reveal it before the window ends.">
+<meta property="og:type" content="website">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="hunt">
+<a class="sr" href="#main">Skip to content</a>
+<div id="app-header"></div>
+<main id="main">
+
+<section class="wrap page-head"><h1>Submit a finding</h1><p>Your finding stays hidden behind a fingerprint until you reveal it. This page keeps the secret salt safe in your browser.</p></section>
+<section class="wrap grid split-b">
+  <div class="stack">
+    <div class="sticker">
+      <h3>1. Pick a bounty</h3>
+      <div class="field"><label for="h-sponsor">Sponsor address</label><div class="input-group"><input id="h-sponsor" class="mono" placeholder="0x…" autocomplete="off" spellcheck="false"><button class="btn small ghost" type="button" id="h-me">Use mine</button></div></div>
+      <div class="field"><label for="h-id">Bounty id</label><div class="input-group"><input id="h-id" placeholder="docs-v1" autocomplete="off" spellcheck="false"><button class="btn small" type="button" id="h-load">Load</button></div></div>
+      <div id="h-bounty"></div>
+    </div>
+    <div class="sticker">
+      <h3>2. Write the finding</h3>
+      <div class="field"><label for="h-title">Title</label><input id="h-title" maxlength="240" placeholder="What is wrong, in one line"><div class="counter" id="h-title-n">0 / 120</div></div>
+      <div class="field"><label for="h-body">Details</label><textarea id="h-body" rows="7" placeholder="Where it is, what is wrong, and why. Be specific so a maintainer can verify and fix it."></textarea><div class="counter" id="h-body-n">0 / 1200</div></div>
+      <div class="field"><label for="h-salt">Secret salt</label><div class="input-group"><input id="h-salt" class="mono" readonly><button class="btn small ghost" type="button" id="h-salt-new">New salt</button></div><div class="hint">Generated here and saved in this browser with your text. You need the same salt to reveal.</div></div>
+      <div class="field"><div class="label">Fingerprint that goes on chain</div><div class="addr break" id="h-hash" style="display:block;padding:10px 12px;border-radius:12px"></div></div>
+      <div id="h-errors" role="alert"></div>
+      <button class="btn mint btn-block" id="h-commit" type="button">Commit finding</button>
+      <p class="small muted" style="margin:10px 0 0">Committing locks the bond from your credit and fixes your place in line. Reveal before the window ends.</p>
+    </div>
+  </div>
+  <div class="stack" id="vault">
+    <div class="callout warn"><strong>Your salt lives in this browser.</strong><p>If you clear site data or switch device before revealing, you cannot reveal and the bond is lost. Export a backup after you commit.</p></div>
+    <div class="row between"><h2 style="margin:0">Your vault</h2>
+      <div class="row"><button class="btn small ghost" id="vault-sync" type="button">Sync</button><button class="btn small ghost" id="vault-export" type="button">Export</button><label class="btn small ghost" style="cursor:pointer;margin:0">Import<input id="vault-import" type="file" accept="application/json,.json" class="sr"></label></div></div>
+    <div id="vault-list" class="queue-list"></div>
+  </div>
+</section>
+
+</main>
+<div id="app-footer"></div>
+<noscript><div style="padding:20px;background:#FFC933;border-top:2px solid #15143B;text-align:center;font-weight:700">Primacy needs JavaScript to talk to your wallet and to Studionet.</div></noscript>
+<script src="assets/js/genlayer-sdk.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/chain.js"></script>
+<script src="assets/js/pages.js"></script>
+<script src="assets/js/pages2.js"></script>
+<script>Primacy.boot(function (page) { var f = Primacy.pages && Primacy.pages[page]; if (f) f(); });</script>
+</body>
+</html>

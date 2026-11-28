@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Primacy: first-finder bounties judged by GenLayer validators</title>
+<meta name="description" content="Commit a hidden finding, reveal it later, and get paid if you were first. GenLayer validators judge duplicates by meaning. Live on Studionet.">
+<meta name="theme-color" content="#110FFF">
+<meta property="og:title" content="Primacy: first-finder bounties judged by GenLayer validators">
+<meta property="og:description" content="Commit a hidden finding, reveal it later, and get paid if you were first. GenLayer validators judge duplicates by meaning. Live on Studionet.">
+<meta property="og:type" content="website">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="home">
+<a class="sr" href="#main">Skip to content</a>
+<div id="app-header"></div>
+<main id="main">
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <h1>Be first.<br>Get paid for it.</h1>
+      <p class="lead">Primacy is a bounty board where the first person to report a real problem gets the reward. The chain fixes who was first. GenLayer validators judge whether two reports describe the same defect, even when the words are different.</p>
+      <div class="row cta">
+        <a class="btn" href="explore.html">Browse bounties</a>
+        <a class="btn sun" href="create.html">Create a bounty</a>
+        <a class="btn white" href="demo.html">Watch the demo</a>
+      </div>
+      <div class="built-on"><span>Built on</span><a href="https://www.genlayer.com" target="_blank" rel="noopener" aria-label="GenLayer"><img src="assets/brand/genlayer-logo-black.svg" alt="GenLayer" height="22"></a><span class="muted">on Studionet</span></div>
+    </div>
+    <div class="scene" aria-label="Three findings in a queue, each stamped with its outcome">
+      <div class="sun-disc"></div><div class="blob"></div>
+      <div class="hticket a"><span class="stamp">Paid</span><h4><span class="n">1</span>Quickstart uses the wrong port</h4><p>Committed first. Reward 0.5 GEN.</p></div>
+      <div class="hticket b"><span class="thread"></span><span class="stamp">Duplicate</span><h4><span class="n">2</span>Dev server port is incorrect</h4><p>Same defect, different words. Bond refunded.</p></div>
+      <div class="hticket c"><span class="thread"></span><span class="stamp">Out of scope</span><h4><span class="n">3</span>Homepage image looks blurry</h4><p>Not a factual error. Bond goes to the sponsor.</p></div>
+      <div class="gate"></div>
+      <div class="hero-note">The order is set by the chain</div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" style="margin-top:-8px">
+  <div class="sticker mint" id="live" aria-live="polite">
+    <div class="row"><span class="spin-orbit sm"><i></i><i></i><i></i></span><b>Reading the contract on Studionet</b></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head"><h2>Four steps, one fair line</h2><p>Nobody can jump the queue, copy a rival's report, or get paid twice for the same defect.</p></div>
+    <div class="flow">
+      <div><h4>Fund</h4><p class="muted">A sponsor writes the scope and locks the reward. Hunters see that the money is already there.</p></div>
+      <div><h4>Commit</h4><p class="muted">A hunter posts only a fingerprint of the finding plus a small bond. That fixes their place in line.</p></div>
+      <div><h4>Reveal</h4><p class="muted">Later the hunter publishes the text. It must match the fingerprint exactly, or it is rejected.</p></div>
+      <div><h4>Judge and pay</h4><p class="muted">Validators decide if it is in scope and new. Contract code, never the model, moves the money.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:20px">
+  <div class="wrap">
+    <div class="section-head"><h2>Built for the awkward cases</h2><p>Bug bounties break in predictable places. Primacy was designed around them.</p></div>
+    <div class="grid g3">
+      <div class="panel feature"><div class="ico">🔒</div><h3>Commit before you speak</h3><p class="muted">The finding is hidden behind a hash until the hunter reveals it, so no one can read it and rush in with a copy.</p></div>
+      <div class="panel feature"><div class="ico">🧠</div><h3>Duplicates by meaning</h3><p class="muted">Rewording does not make a finding new. Validators compare the underlying defect, and a deterministic guard catches near copies.</p></div>
+      <div class="panel feature"><div class="ico">⚖️</div><h3>Code moves the money</h3><p class="muted">The model only fills in a small form. Amounts and recipients come from contract rules that anyone can audit.</p></div>
+      <div class="panel feature"><div class="ico">🛡️</div><h3>Bonds against spam</h3><p class="muted">Every finding locks a bond. Valid work gets it back. Invalid or abandoned findings pay the sponsor.</p></div>
+      <div class="panel feature"><div class="ico">🧱</div><h3>Hardened against tricks</h3><p class="muted">Reports are treated as untrusted data inside a sealed fence, so text like "ignore the rules" is just text.</p></div>
+      <div class="panel feature"><div class="ico">⏱️</div><h3>Bounded retries</h3><p class="muted">If validators cannot decide, the call backs off and gives up after a fixed budget. The bond is refunded and the line moves on.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band-sun section">
+  <div class="wrap grid g2" style="align-items:center">
+    <div><h2>See a real one</h2><p class="muted" style="font-size:1.1rem">The launch test run left real bounties on this contract, with commits, reveals, duplicates and a close. Open one and read how validators explained each decision.</p>
+      <div class="row"><a class="btn" href="bounty.html?s=0x174fbcdecffc4ada6bd69470fcea8dce760eac3e&id=MAIN">Open the MAIN bounty</a><a class="btn white" href="explore.html">Find another</a></div></div>
+    <div class="sticker"><h3>New here?</h3><p class="muted">The interactive demo plays the whole story in under two minutes, with real fingerprints, and needs no wallet.</p><a class="btn sun" href="demo.html">Start the demo</a></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap grid g2" style="align-items:center">
+    <div><h2>Runs on GenLayer</h2><p class="muted" style="font-size:1.1rem">Primacy is an Intelligent Contract: ordinary contract rules plus language-model judgement that validators check against each other. If they cannot agree on the classification, nothing is paid.</p>
+      <div class="row"><a class="btn white" href="docs.html#decisions">How decisions are made</a><a class="btn ghost" href="https://docs.genlayer.com" target="_blank" rel="noopener">GenLayer docs</a></div></div>
+    <div class="sticker cobalt"><img src="assets/brand/genlayer-logo-white.svg" alt="GenLayer" height="34" style="margin-bottom:16px"><p style="margin:0">Deployed on <b>GenLayer Studionet</b> at <a class="addr" style="color:#15143B" href="https://explorer-studio.genlayer.com/address/0xf49Fca785788a2a3881c593F33B2E20113FD99e1" target="_blank" rel="noopener">0xf49F…99e1</a>. Test network, test funds.</p></div>
+  </div>
+</section>
+
+</main>
+<div id="app-footer"></div>
+<noscript><div style="padding:20px;background:#FFC933;border-top:2px solid #15143B;text-align:center;font-weight:700">Primacy needs JavaScript to talk to your wallet and to Studionet.</div></noscript>
+<script src="assets/js/genlayer-sdk.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/chain.js"></script>
+<script src="assets/js/pages.js"></script>
+<script src="assets/js/pages2.js"></script>
+<script>Primacy.boot(function (page) { var f = Primacy.pages && Primacy.pages[page]; if (f) f(); });</script>
+</body>
+</html>

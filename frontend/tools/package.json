@@ -1,0 +1,10 @@
+{
+  "name": "primacy-frontend-tools",
+  "private": true,
+  "description": "Rebuilds assets/js/genlayer-sdk.js, the browser bundle of genlayer-js used by the Primacy site.",
+  "scripts": {
+    "build": "esbuild gl-entry.js --bundle --minify --format=iife --platform=browser --target=es2020 --outfile=../assets/js/genlayer-sdk.js"
+  },
+  "dependencies": { "genlayer-js": "2.2.0" },
+  "devDependencies": { "esbuild": "0.28.2" }
+}

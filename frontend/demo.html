@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interactive demo · Primacy</title>
+<meta name="description" content="A two-minute guided simulation of a Primacy bounty: deposit, commit, reveal, judge, pay.">
+<meta name="theme-color" content="#110FFF">
+<meta property="og:title" content="Interactive demo · Primacy">
+<meta property="og:description" content="A two-minute guided simulation of a Primacy bounty: deposit, commit, reveal, judge, pay.">
+<meta property="og:type" content="website">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="demo">
+<a class="sr" href="#main">Skip to content</a>
+<div id="app-header"></div>
+<main id="main">
+
+<section class="wrap page-head"><h1>See it work in two minutes</h1><p>A guided simulation of a whole bounty with four people. Nothing here touches your wallet or the network, but the fingerprints are computed with the same code the site uses on chain.</p></section>
+<section class="wrap" style="padding-bottom:20px">
+  <div class="demo">
+    <div class="stage"><div class="stage-bar"><i></i><i></i><i></i><span>Simulation: amounts in GEN</span></div><div class="stage-body" id="stage" aria-live="polite"></div></div>
+    <aside class="sticker narr" id="narr"></aside>
+  </div>
+</section>
+<section class="section"><div class="wrap grid g3">
+  <div class="panel"><h3>What was real</h3><p class="muted">The rules, the order of events, the payouts, and the fingerprints. The decision form validators fill in has exactly these fields.</p></div>
+  <div class="panel"><h3>What was simulated</h3><p class="muted">The people, the amounts, and the validators' answers. A real run asks live validators and can differ, which is why decisions are checked by consensus.</p></div>
+  <div class="sticker sun"><h3>Ready for the real thing?</h3><p>Connect a wallet, grab test GEN, and try a tiny bounty of your own.</p><a class="btn" href="wallet.html">Open My credit</a></div>
+</div></section>
+
+</main>
+<div id="app-footer"></div>
+<noscript><div style="padding:20px;background:#FFC933;border-top:2px solid #15143B;text-align:center;font-weight:700">Primacy needs JavaScript to talk to your wallet and to Studionet.</div></noscript>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/chain.js"></script>
+<script src="assets/js/pages.js"></script>
+<script src="assets/js/pages2.js"></script>
+<script src="assets/js/demo.js"></script>
+<script>Primacy.boot(function (page) { var f = Primacy.pages && Primacy.pages[page]; if (f) f(); });</script>
+</body>
+</html>

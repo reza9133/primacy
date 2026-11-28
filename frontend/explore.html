@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bounties · Primacy</title>
+<meta name="description" content="Open any Primacy bounty by sponsor address and id.">
+<meta name="theme-color" content="#110FFF">
+<meta property="og:title" content="Bounties · Primacy">
+<meta property="og:description" content="Open any Primacy bounty by sponsor address and id.">
+<meta property="og:type" content="website">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="explore">
+<a class="sr" href="#main">Skip to content</a>
+<div id="app-header"></div>
+<main id="main">
+
+<section class="wrap page-head"><h1>Bounties</h1><p>A bounty is identified by its sponsor and its id. Paste both to open it, or start from your own list.</p></section>
+<section class="wrap grid g2" style="align-items:start">
+  <div class="sticker">
+    <h3>Find a bounty</h3>
+    <form id="find-form" novalidate>
+      <div class="field"><label for="f-sponsor">Sponsor address</label>
+        <div class="input-group"><input id="f-sponsor" class="mono" placeholder="0x…" autocomplete="off" spellcheck="false"><button class="btn small ghost" type="button" id="f-me">Use mine</button></div></div>
+      <div class="field"><label for="f-id">Bounty id</label><input id="f-id" placeholder="docs-v1" autocomplete="off" spellcheck="false"></div>
+      <div class="err" id="f-err" role="alert" style="color:#C2281B;font-weight:600;margin-bottom:10px"></div>
+      <button class="btn mint btn-block" type="submit">Open bounty</button>
+    </form>
+  </div>
+  <div class="stack">
+    <div class="panel"><h3>Your list</h3><div id="watch-list" class="watch"></div></div>
+    <div class="panel"><h3>Live examples</h3><p class="small muted">Created by the launch test run on this contract.</p><div id="examples" class="watch"></div></div>
+  </div>
+</section>
+<section class="wrap" style="margin-top:36px"><div class="callout"><strong>Why no global list?</strong><p>The contract stores each bounty under its sponsor and id and does not keep an index of all bounties, which keeps every call cheap. Sponsors share a link such as <code>bounty.html?s=0x…&amp;id=docs-v1</code>, and bounties you open or create are remembered in this browser.</p></div></section>
+
+</main>
+<div id="app-footer"></div>
+<noscript><div style="padding:20px;background:#FFC933;border-top:2px solid #15143B;text-align:center;font-weight:700">Primacy needs JavaScript to talk to your wallet and to Studionet.</div></noscript>
+<script src="assets/js/genlayer-sdk.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/chain.js"></script>
+<script src="assets/js/pages.js"></script>
+<script src="assets/js/pages2.js"></script>
+<script>Primacy.boot(function (page) { var f = Primacy.pages && Primacy.pages[page]; if (f) f(); });</script>
+</body>
+</html>

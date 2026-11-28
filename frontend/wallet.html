@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My credit · Primacy</title>
+<meta name="description" content="Deposit and withdraw your Primacy credit, and see the contract's accounting.">
+<meta name="theme-color" content="#110FFF">
+<meta property="og:title" content="My credit · Primacy">
+<meta property="og:description" content="Deposit and withdraw your Primacy credit, and see the contract's accounting.">
+<meta property="og:type" content="website">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="wallet">
+<a class="sr" href="#main">Skip to content</a>
+<div id="app-header"></div>
+<main id="main">
+
+<section class="wrap page-head"><h1>My credit</h1><p>Bonds and rewards move through your credit inside Primacy. Deposit GEN to take part, withdraw whatever is free at any time.</p></section>
+<section class="wrap">
+  <div id="w-off" class="sticker center hide"><span class="spin-orbit" style="margin-bottom:10px"><i></i><i></i><i></i></span><h2>Connect a wallet</h2><p class="muted">Your credit belongs to your address, so Primacy needs to know which one it is.</p><button id="w-connect" class="btn" type="button">Connect wallet</button></div>
+  <div id="w-on" class="stack hide">
+    <div class="grid g3">
+      <div class="panel"><div class="muted small">Account</div><div id="w-account" style="margin-top:6px"></div></div>
+      <div class="sticker mint"><div class="stat"><b id="w-credit">···</b><span>Primacy credit, available now</span></div></div>
+      <div class="panel"><div class="stat"><b id="w-native">···</b><span>GEN in your wallet</span></div></div>
+    </div>
+    <div id="w-low" class="callout warn hide"><strong>Low on GEN.</strong><p>You need GEN on Studionet to deposit and to pay network fees. Studionet can send a small amount of test GEN to your address.</p><button id="w-faucet" class="btn small sun" type="button">Get 1 test GEN</button></div>
+    <div class="grid g2" style="align-items:start">
+      <div class="sticker">
+        <h3>Deposit</h3>
+        <div class="field"><label for="w-amount">Amount in GEN</label><div class="suffix"><input id="w-amount" value="0.1" inputmode="decimal"><span><img src="assets/brand/gen-token.svg" alt="" width="18" height="18">GEN</span></div></div>
+        <div class="row" style="margin-bottom:14px"><button class="btn small ghost" data-amt="0.01" type="button">0.01</button><button class="btn small ghost" data-amt="0.1" type="button">0.1</button><button class="btn small ghost" data-amt="0.5" type="button">0.5</button></div>
+        <button id="w-deposit" class="btn mint btn-block" type="button">Deposit</button>
+        <p class="small muted" style="margin:10px 0 0">Always use this button. GEN sent to the contract any other way is not credited to anyone.</p>
+      </div>
+      <div class="sticker">
+        <h3>Withdraw</h3>
+        <p class="muted">Sends your whole available credit back to your own wallet. Anything locked in a bounty or a bond stays locked until it is decided.</p>
+        <button id="w-withdraw" class="btn white btn-block" type="button">Withdraw all credit</button>
+        <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+        <button id="w-faucet-2" class="btn small ghost" type="button" onclick="document.getElementById('w-faucet').click()">Need test GEN?</button>
+      </div>
+    </div>
+    <div class="grid g2" style="align-items:start">
+      <div class="panel"><h3>Your activity</h3><div id="w-activity"></div></div>
+      <div class="panel"><h3>The contract's books</h3><div id="w-acc"></div></div>
+    </div>
+  </div>
+</section>
+
+</main>
+<div id="app-footer"></div>
+<noscript><div style="padding:20px;background:#FFC933;border-top:2px solid #15143B;text-align:center;font-weight:700">Primacy needs JavaScript to talk to your wallet and to Studionet.</div></noscript>
+<script src="assets/js/genlayer-sdk.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/chain.js"></script>
+<script src="assets/js/pages.js"></script>
+<script src="assets/js/pages2.js"></script>
+<script>Primacy.boot(function (page) { var f = Primacy.pages && Primacy.pages[page]; if (f) f(); });</script>
+</body>
+</html>
